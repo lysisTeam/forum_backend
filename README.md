@@ -64,11 +64,12 @@ Pour installer ces dépendances :
 
     npm install 
 
- 5. créez un fichier .env dans le dossier forum_backend et mettez y ces variables :
+  5. créez un fichier .env dans le dossier forum_backend et mettez y ces variables :
 
-        PORT = 3001 
-        MONGO_URL = mongodb://127.0.0.1:27017
+    PORT = 3001 
+    MONGO_URL = mongodb://127.0.0.1:27017
 
- 6. Ouvrez mongodb compass puis lancez l'application :
+  7. Ouvrez mongodb compass puis lancez l'application :
 
-        npm run server
+    npm run server 
+
