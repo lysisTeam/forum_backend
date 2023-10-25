@@ -45,4 +45,30 @@ Pour installer ces dépendances :
 
     npm install express cors nodemon dotenv mongoose
 
+# IMPORTANT : Comment récupérer le projet ?
 
+  1.Assurez vous de télécharger sur votre ordinateur les éléments suivants : 
+
+    node, npm, mongdb comunity, mongodb compass
+
+  2. Créez un dossier ( Ex : myspace ). Ouvrez le avec votre éditeur de code ( visual studio code ). Ouvrez le terminal dans vscode et  
+     clonez le repository dans un dossier sur votre ordi :
+
+    git clone https://github.com/lysisTeam/forum_backend.git
+
+  3. Assurez vous d'être bien dans le dossier forum_backend :
+
+    cd forum_backend
+
+  4. Télécharger toutes les dépendances
+
+    npm install 
+
+ 5. créez un fichier .env dans le dossier forum_backend et mettez y ces variables :
+
+        PORT = 3001 
+        MONGO_URL = mongodb://127.0.0.1:27017
+
+ 6. Ouvrez mongodb compass puis lancez l'application :
+
+        npm run server
