@@ -15,7 +15,11 @@ J'écrirai le code principal pour que vous voyiez comment cela fonctionne.
 
 # initialisation du projet
 
-Pour initialiser un projet node : npm init -y . Cette commande crée un fichier package.json qui comportera les configurations et la liste des dependances de notre application.
+Pour initialiser un projet node : 
+
+    npm init -y 
+
+. Cette commande crée un fichier package.json qui comportera les configurations et la liste des dependances de notre application.
 
 Ensuite il est éssentiel de créer le fichier le plus important : server.js ou index.js ou peutimportelenomceladependdevous.js . ce fichier sera le point de départ de notre application c'est ce fichier qui sera lu en premier et qui fournira tous les services de notre application.
 
@@ -39,4 +43,6 @@ mongoose : bibliothèque JavaScript qui permet de simplifier l'interaction avec 
 
 Pour installer ces dépendances : 
 
-npm install express cors nodemon dotenv mongoose
+    npm install express cors nodemon dotenv mongoose
+
+
