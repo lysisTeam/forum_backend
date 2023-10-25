@@ -1,21 +1,31 @@
-/*D'abord nous devons installer les dépendances de notre apllication ( express, cors, nodemon, dotenv, mongoose ) 
-  bien sûr il en aura d'autre à installer tout au long du projet.
-
-  Express : framework backend Node.js minimaliste, rapide et de type Sinatra qui offre des fonctionnalités et des 
-  outils robustes pour développer des applications backend évolutives. Il vous offre le système de routage et des 
-  fonctionnalités simplifiées pour étendre le framework en développant des composants et des parties plus puissants 
-  en fonction des cas d’utilisation de votre application.
-
-  cors : CORS, ou Cross-Origin Resource Sharing, est une politique de sécurité mise en place par les navigateurs web 
-  pour empêcher les requêtes de provenir de domaines différents (origines différentes) par défaut. 
-  il nous servira à choisir d'où coivent provenir les requêtes ( de notre frontend ).
-
-  Nodemon : outil populaire dans le monde du développement Node.js. Il est utilisé pour automatiser le processus de 
-  redémarrage d'une application Node.js lorsque des fichiers source sont modifiés.
-  
-  dotenv : Il servira à ajouter un fichier d'environnement pour cacher des variables sensibles et globales ( comme les mots de passes etc... ).
-
-  mongoose : bibliothèque JavaScript qui permet de simplifier l'interaction avec une base de données MongoDB dans le cadre du développement d'applications Node.js. 
-
-  Pour installer ces dépendances : npm install express cors nodemon dotenv mongoose
+/*
+    Iniatialisation des dépendances nécéssaires
 */
+
+const express = require('express')
+const app = express() // on initialise express et on le stocke dans la constante app pour l'utiliser plus facilement
+const cors = require('cors') // initialisation de cors
+const dotenv = require('dotenv').config() // Pour pouvoir utiliser les variables d'environnement
+const dbConnect = require('./config/db') // Recupération de la fonction pour la connexion à la base de données. cette fonction se trouve dans /config/db.js
+
+//-----------------------------------------------------------------------------------------------------------------------------
+
+/*
+    Middlewares pour cors et pour autoriser les formats json et url
+*/
+
+app.use(cors())
+app.use(express.json())
+app.use(express.urlencoded({extended: true}))
+
+//------------------------------------------------------------------------------------------------------------------------------
+
+/*
+    Fonction pour le démarrage du serveur et pour la connexion à la base de données
+*/
+
+dbConnect()
+
+app.listen(process.env.PORT, ()=>{
+    console.log(`Serveur démarré.`);
+})
