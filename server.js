@@ -12,6 +12,7 @@ const dotenv = require('dotenv').config() // Pour pouvoir utiliser les variables
 
  // Recupération de la fonction pour la connexion à la base de données. cette fonction se trouve dans /config/db.js
 
+
 //-----------------------------------------------------------------------------------------------------------------------------
 
 /*
