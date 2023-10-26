@@ -8,6 +8,7 @@ const cors = require('cors') // initialisation de cors
 const dotenv = require('dotenv').config() // Pour pouvoir utiliser les variables d'environnement
 const dbConnect = require('./config/db') // Recupération de la fonction pour la connexion à la base de données. cette fonction se trouve dans /config/db.js
 
+
 //-----------------------------------------------------------------------------------------------------------------------------
 
 /*
