@@ -5,8 +5,12 @@
 const express = require('express')
 const app = express() // on initialise express et on le stocke dans la constante app pour l'utiliser plus facilement
 const cors = require('cors') // initialisation de cors
+const dbConnect = require('./config/db')
 const dotenv = require('dotenv').config() // Pour pouvoir utiliser les variables d'environnement
-const dbConnect = require('./config/db') // Recupération de la fonction pour la connexion à la base de données. cette fonction se trouve dans /config/db.js
+
+
+
+ // Recupération de la fonction pour la connexion à la base de données. cette fonction se trouve dans /config/db.js
 
 //-----------------------------------------------------------------------------------------------------------------------------
 
@@ -15,6 +19,7 @@ const dbConnect = require('./config/db') // Recupération de la fonction pour la
 */
 
 app.use(cors())
+
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 
