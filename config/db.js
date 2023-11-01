@@ -11,11 +11,4 @@ const dbConnect = async () =>{
 }
 
 
-
-// async function dbConnect (){
-//     await mongoose.connect(process.env.MONGO_URL)
-//     .then(()=>console.log("Base de données connectée"))
-//     .catch((error)=>console.log(error))
-// }
-
 module.exports = dbConnect
