@@ -4,11 +4,11 @@ const userSchema = new mongoose.Schema(
     {
         nom : {
             type: String,
-            required
+            required: true
         },
         prenoms : {
             type: String,
-            required
+            required: true
         },
         username: {
             type: String,
@@ -31,7 +31,8 @@ const userSchema = new mongoose.Schema(
             required: true
         },
         photo:{
-            type:String
+            type:String,
+            default: null
         }
     },
     {
