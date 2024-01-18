@@ -67,16 +67,19 @@ module.exports.registerAdmin = async (req, res) => {
 module.exports.loginAdmin = async(req, res)=>{
     const data = req.body
     const {error} = schemaDataLogin.validate(data)
-    if(error) return res.status(400).json(error.details[0].message)
+
+    if(error) return res.status(400).json({error: error.details[0].message, path: error.details[0].path[0]})
+   
 
     try {
         const usernameExist = await adminModel.findOne({username: data.username})
-        if (!usernameExist) return res.status(400).json("Utilisateur introuvable")
+        if (!usernameExist) return res.status(400).json({error: "Utilisateur introuvable", path: "username"})
 
-        const passwordVerification = bcrypt.compare(data.password, usernameExist.password)
-        if(!passwordVerification) return res.status(400).json("Mauvais mot de passe")
-
+        const passwordVerification = await bcrypt.compare(data.password, usernameExist.password)
+        if(!passwordVerification) return res.status(400).json({error: "Mauvais mot de passe", path: "password"})
+    
         const token = jwt.sign({adminId: usernameExist._id}, process.env.SECRET_KEY)
+        
         res.json({token})
     } catch (error) {
         res.status(400).json({error})

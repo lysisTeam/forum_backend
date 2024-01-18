@@ -96,6 +96,10 @@ module.exports.createUser = async (req,res) => {
             specialite: data.specialite.toLowerCase()
         })
 
+        if(req.file){
+            user.photo = req.file.path
+        }
+
         const userSaved = await user.save()
 
         sendMailToUser(userSaved, data.password)
@@ -105,5 +109,14 @@ module.exports.createUser = async (req,res) => {
         
     } catch (error) {
         res.status(400).json({error})
+    }
+}
+
+module.exports.getUsers = async(req, res)=>{
+    try {
+        const users = await userModel.find()
+        res.json({users})
+    } catch (err) {
+        res.status(400).json({err})
     }
 }
