@@ -3,23 +3,33 @@ const joi = require('joi')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
+
+// Définir des messages d'erreur personnalisés pour Joi
+const customMessages = {
+    'string.base': '{{#label}} doit être une chaîne de caractères',
+    'string.min': '{{#label}} doit avoir une longueur d\'au moins {{#limit}} caractères',
+    'string.max': '{{#label}} doit avoir une longueur d\'au plus {{#limit}} caractères',
+    'string.email': '{{#label}} doit être une adresse e-mail valide',
+    'string.required': '{{#label}} est requis',
+};
+
 // Création d'un schema de validation pour les données lors de la création de compte admin
 const schemaDataRegister = joi.object(
     {
-        nom: joi.string().min(3).required(),
-        prenoms: joi.string().min(5).required(),
-        username: joi.string().min(5).required(),
-        email: joi.string().min(7),
-        password: joi.string().min(8).required(),
-        passwordRepeat: joi.string().min(8).required(),
+        nom: joi.string().min(3).required().messages(customMessages),
+        prenoms: joi.string().min(5).required().messages(customMessages),
+        username: joi.string().min(5).required().messages(customMessages),
+        email: joi.string().email().min(7).messages(customMessages),
+        password: joi.string().min(8).required().messages(customMessages),
+        passwordRepeat: joi.string().min(8).required().messages(customMessages),
     }
 )
 
 // Création d'un schema de validation pour les données lors de la connexion d'un admin
 const schemaDataLogin = joi.object(
     {
-        username: joi.string().min(5).required(),
-        password: joi.string().min(8).required(),
+        username: joi.string().min(5).required().messages(customMessages),
+        password: joi.string().min(8).required().messages(customMessages),
     }
 )
 
@@ -31,7 +41,7 @@ module.exports.registerAdmin = async (req, res) => {
     const data = req.body
 
     const {error} = schemaDataRegister.validate(data)
-    if(error) return res.status(400).json(error.details[0].message)
+    if(error) return res.status(400).json(error.details[0].message.replace(/["']/g, ''))
 
     try {
         const usernameExist = await adminModel.findOne({username: data.username})
@@ -68,7 +78,7 @@ module.exports.loginAdmin = async(req, res)=>{
     const data = req.body
     const {error} = schemaDataLogin.validate(data)
 
-    if(error) return res.status(400).json({error: error.details[0].message, path: error.details[0].path[0]})
+    if(error) return res.status(400).json({error: error.details[0].message.replace(/["']/g, ''), path: error.details[0].path[0]})
    
 
     try {

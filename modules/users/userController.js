@@ -3,16 +3,24 @@ const joi = require('joi')
 const bcrypt = require('bcrypt')
 const nodemailer = require('nodemailer');
 
+const customMessages = {
+    'string.base': '{{#label}} doit être une chaîne de caractères',
+    'string.min': '{{#label}} doit avoir une longueur d\'au moins {{#limit}} caractères',
+    'string.max': '{{#label}} doit avoir une longueur d\'au plus {{#limit}} caractères',
+    'string.email': '{{#label}} doit être une adresse e-mail valide',
+    'string.required': '{{#label}} est requis',
+};
+
 const schemaDataCreateUser = joi.object(
     {
-        nom: joi.string().min(3).required(),
-        prenoms: joi.string().min(5).required(),
-        username: joi.string().min(5).required(),
-        email: joi.string().min(7).required(),
-        password: joi.string().min(8).required(),
-        passwordRepeat: joi.string().min(8).required(),
-        classe: joi.string().min(5).required(),
-        specialite: joi.string().min(2).required()
+        nom: joi.string().min(3).required().messages(customMessages),
+        prenoms: joi.string().min(5).required().messages(customMessages),
+        username: joi.string().min(5).required().messages(customMessages),
+        email: joi.string().min(7).required().messages(customMessages),
+        password: joi.string().min(8).required().messages(customMessages),
+        passwordRepeat: joi.string().min(8).required().messages(customMessages),
+        classe: joi.string().min(5).required().messages(customMessages),
+        specialite: joi.string().min(2).required().messages(customMessages)
     }
 )
 
