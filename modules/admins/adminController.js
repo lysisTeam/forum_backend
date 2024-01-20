@@ -41,16 +41,16 @@ module.exports.registerAdmin = async (req, res) => {
     const data = req.body
 
     const {error} = schemaDataRegister.validate(data)
-    if(error) return res.status(400).json(error.details[0].message.replace(/["']/g, ''))
+    if(error) return res.status(400).json({error: error.details[0].message.replace(/["']/g, ''), path: error.details[0].path[0]})
 
     try {
         const usernameExist = await adminModel.findOne({username: data.username})
-        if (usernameExist) return res.status(400).json("Ce nom d'utilisateur existe déjà")
+        if (usernameExist) return res.status(400).json({error: "Ce nom d'utilisateur existe déjà", path: "username"})
 
         const emailExist = await adminModel.findOne({email: data.email})
-        if (emailExist) return res.status(400).json("Cet email existe déjà")
+        if (emailExist) return res.status(400).json({error: "Cet email existe déjà", path: "email"})
 
-        if(data.password !== data.passwordRepeat) return res.status(400).json('Les mots de passe doivent être les mêmes')
+        if(data.password !== data.passwordRepeat) return res.status(400).json({error: 'Les mots de passe doivent être les mêmes', path: "password"})
 
         const hashedPassword = await bcrypt.hash(data.password, 10)
 

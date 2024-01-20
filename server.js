@@ -36,6 +36,14 @@ app.use(express.urlencoded({extended: true}))
 app.use('/api/admin', require('./modules/admins/adminRoute'))
 app.use('/api/user', require('./modules/users/userRoute'))
 
+//-------------------------------------------------------------------------------------------------------------------------------
+
+/*
+    Rendre le dossier uploads accéssible
+*/
+
+app.use('/uploads', express.static('uploads'))
+
 //------------------------------------------------------------------------------------------------------------------------------
 
 /*

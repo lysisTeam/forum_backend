@@ -2,6 +2,7 @@ const userModel = require("./userModel");
 const joi = require('joi') 
 const bcrypt = require('bcrypt')
 const nodemailer = require('nodemailer');
+const fs = require('fs')
 
 const customMessages = {
     'string.base': '{{#label}} doit être une chaîne de caractères',
@@ -13,9 +14,9 @@ const customMessages = {
 
 const schemaDataCreateUser = joi.object(
     {
-        nom: joi.string().min(3).required().messages(customMessages),
-        prenoms: joi.string().min(5).required().messages(customMessages),
-        username: joi.string().min(5).required().messages(customMessages),
+        nom: joi.string().min(2).required().messages(customMessages),
+        prenoms: joi.string().min(3).required().messages(customMessages),
+        // username: joi.string().min(5).required().messages(customMessages),
         email: joi.string().min(7).required().messages(customMessages),
         password: joi.string().min(8).required().messages(customMessages),
         passwordRepeat: joi.string().min(8).required().messages(customMessages),
@@ -77,27 +78,32 @@ const sendMailToUser = async (user, mdp) => {
 
 module.exports.createUser = async (req,res) => {
     const data = req.body
+    
 
     const {error} = schemaDataCreateUser.validate(data)
-    if(error) return res.status(400).json(error.details[0].message)
+    if(error) return res.status(400).json({error: error.details[0].message, path: error.details[0].path[0]})
+    
 
     try {
-
-        
-        const usernameExist = await userModel.findOne({username: data.username})
-        if (usernameExist) return res.status(400).json("Ce nom d'utilisateur existe déjà")
-        
         const emailExist = await userModel.findOne({email: data.email})
-        if (emailExist) return res.status(400).json("Cet email existe déjà")
+        if (emailExist){
+            unlikePic(req)
+            return res.status(400).json({error: "Cet email existe déjà", path: "email"})
+        } 
         
-        if(data.password !== data.passwordRepeat) return res.status(400).json('Les mots de passe doivent être les mêmes')
+        if(data.password !== data.passwordRepeat){
+            unlikePic(req)
+            return res.status(400).json({error: 'Les mots de passe doivent être les mêmes', path: "password"})
+        } 
 
         const hashedPassword = await bcrypt.hash(data.password, 10)
+
+        // console.log(data.prenoms[0]);
 
         const user = new userModel({
             nom: data.nom.toLowerCase(),
             prenoms: data.prenoms.toLowerCase(),
-            username: data.username,
+            username: data.prenoms[0].toLowerCase() + data.nom.toLowerCase() + '2024',
             email: data.email.toLowerCase(),
             password: hashedPassword,
             classe: data.classe.toLowerCase(),
@@ -116,15 +122,27 @@ module.exports.createUser = async (req,res) => {
 
         
     } catch (error) {
+        unlikePic(req)
+
         res.status(400).json({error})
     }
 }
 
 module.exports.getUsers = async(req, res)=>{
     try {
-        const users = await userModel.find()
+        const users = await userModel.find().sort({createdAt: -1})
         res.json({users})
     } catch (err) {
         res.status(400).json({err})
+    }
+}
+
+const unlikePic = (req) =>{
+    if(req.file){
+        fs.unlink(req.file.path,  (err) => {
+            if (err) {
+              throw new Error('Erreur lors de la suppression du fichier');
+            }
+        })
     }
 }
