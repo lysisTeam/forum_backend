@@ -76,6 +76,17 @@ const sendMailToUser = async (user, mdp) => {
 
 }
 
+
+const unlikePic = (req) =>{
+    if(req.file){
+        fs.unlink(req.file.path,  (err) => {
+            if (err) {
+              throw new Error('Erreur lors de la suppression du fichier');
+            }
+        })
+    }
+}
+
 module.exports.createUser = async (req,res) => {
     const data = req.body
     
@@ -137,12 +148,33 @@ module.exports.getUsers = async(req, res)=>{
     }
 }
 
-const unlikePic = (req) =>{
-    if(req.file){
-        fs.unlink(req.file.path,  (err) => {
-            if (err) {
-              throw new Error('Erreur lors de la suppression du fichier');
+module.exports.deleteUsers = async(req, res)=>{
+    let userDeleted = []
+    let userNotDeleted = []
+    try {
+        const idsToDelete = req.body.ids;
+
+        for(const id of idsToDelete){
+            
+            const result = await userModel.findByIdAndRemove(id)
+            if (result) {
+                if (result.photo) {
+                    fs.unlink(result.photo,  (err) => {
+                        if (err) {
+                          throw new Error('Erreur lors de la suppression du fichier');
+                        }
+                    })
+                }
+
+                userDeleted.push(id)
+
+            }else{
+                userNotDeleted.push(id)
             }
-        })
+        }
+
+        res.json({ message : "Suppression terminée", userDeleted: userDeleted, userNotDeleted: userNotDeleted })
+    } catch (err) {
+        res.status(400).json({err})
     }
 }
