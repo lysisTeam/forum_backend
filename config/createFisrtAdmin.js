@@ -14,6 +14,7 @@ const createFirstAdmin = async () =>{
             prenoms: "lysis",
             username: "lysis_admin",
             email: "",
+            autorisation: 1,
             password: hashedPassword
         })
 

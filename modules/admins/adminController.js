@@ -17,8 +17,8 @@ const customMessages = {
 const schemaDataRegister = joi.object(
     {
         nom: joi.string().min(3).required().messages(customMessages),
-        prenoms: joi.string().min(5).required().messages(customMessages),
-        username: joi.string().min(5).required().messages(customMessages),
+        prenoms: joi.string().min(3).required().messages(customMessages),
+        autorisation: joi.number(),
         email: joi.string().email().min(7).messages(customMessages),
         password: joi.string().min(8).required().messages(customMessages),
         passwordRepeat: joi.string().min(8).required().messages(customMessages),
@@ -57,8 +57,9 @@ module.exports.registerAdmin = async (req, res) => {
         const admin = new adminModel({
             nom: data.nom.toLowerCase(),
             prenoms: data.prenoms.toLowerCase(),
-            username: data.username,
+            username: data.username || data.prenoms[0].toLowerCase() + data.nom.toLowerCase() + '_admin',
             email: data.email?.toLowerCase() || null,
+            autorisation: data.autorisation || 0,
             password: hashedPassword
         })
 
@@ -105,6 +106,15 @@ module.exports.getAdmin = async(req, res)=>{
     try {
         const admin = await adminModel.findById(id)
         res.json({admin})
+    } catch (error) {
+        res.status(400).json({error})
+    }
+}
+
+module.exports.getAdmins = async(req, res) =>{
+    try {
+        const admins = await adminModel.find()
+        res.json({admins})
     } catch (error) {
         res.status(400).json({error})
     }
