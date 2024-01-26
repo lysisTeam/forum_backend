@@ -89,7 +89,7 @@ module.exports.loginAdmin = async(req, res)=>{
         const passwordVerification = await bcrypt.compare(data.password, usernameExist.password)
         if(!passwordVerification) return res.status(400).json({error: "Mauvais mot de passe", path: "password"})
     
-        const token = jwt.sign({adminId: usernameExist._id}, process.env.SECRET_KEY)
+        const token = jwt.sign({adminId: usernameExist._id}, process.env.SECRET_KEY, {expiresIn : '3h'})
         
         res.json({token})
     } catch (error) {

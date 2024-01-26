@@ -12,16 +12,26 @@ const jwt = require('jsonwebtoken')
     -Ensuite la fonction laisse passer la requete vers le controlleur pour la suite de l'exécution
 */
 const verifyAdminToken = async (req, res, next) =>{
-    try {
-        const token = req.headers.token
+    const token = req.headers.token
 
-        const tokenVerification = jwt.verify(token, process.env.SECRET_KEY)
-        req.adminId = tokenVerification.adminId
-
-        next()
-    } catch (error) {
-        return res.status(400).json("Vous n'avez pas les droits d'administrateur")
+    if (!token) {
+        return res.status(401).json({ message: 'Token non fourni' });
     }
+
+    jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
+        if (err) {
+            return res.status(401).json({ message: 'Token non valide' });
+        }
+    
+        // Vérifiez la date d'expiration
+        if (decoded.exp <= Date.now() / 1000) {
+            return res.status(401).json({ message: 'Token expiré' });
+        }
+
+        // Le token est valide, passez à la suite
+        req.adminId = decoded.adminId
+        next()
+    })
 }
 
 module.exports = verifyAdminToken
