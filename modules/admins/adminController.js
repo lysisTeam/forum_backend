@@ -119,3 +119,27 @@ module.exports.getAdmins = async(req, res) =>{
         res.status(400).json({error})
     }
 }
+
+module.exports.deleteAdmins = async(req, res)=>{
+    let adminDeleted = []
+    let adminNotDeleted = []
+    try {
+        const idsToDelete = req.body.ids;
+
+        for(const id of idsToDelete){
+            
+            const result = await adminModel.findByIdAndRemove(id)
+            if (result) {
+
+                adminDeleted.push(id)
+
+            }else{
+                adminNotDeleted.push(id)
+            }
+        }
+
+        res.json({ message : "Suppression terminée", adminDeleted: adminDeleted, adminNotDeleted: adminNotDeleted })
+    } catch (err) {
+        res.status(400).json({err})
+    }
+}
