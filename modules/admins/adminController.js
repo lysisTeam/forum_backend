@@ -112,11 +112,59 @@ module.exports.getAdmin = async(req, res)=>{
 }
 
 module.exports.getAdmins = async(req, res) =>{
+    const motCle = req.body.searchContent
     try {
-        const admins = await adminModel.find()
+        let admins = []
+
+        if (motCle) {
+            admins = await adminModel.find({
+                $or: [
+                    { nom: { $regex: motCle, $options: 'i' } }, // $regex pour une correspondance partielle, $options: 'i' pour insensible à la casse
+                    { prenoms: { $regex: motCle, $options: 'i' } },
+                    { email: { $regex: motCle, $options: 'i' } },
+
+                ]
+            }).sort({createdAt: -1})
+        }else{
+            admins = await adminModel.find().sort({createdAt: -1})
+        }
         res.json({admins})
     } catch (error) {
         res.status(400).json({error})
+    }
+}
+
+module.exports.updateAdmin = async(req, res) =>{
+    const id = req.adminId
+
+    try {
+        const adminExist = await adminModel.findOne({_id: id})
+        if(!adminExist) return res.status(400).json('Cet utilisateur est introuvable')
+
+        if (req.body.oldPassword) {
+            
+            const passwordVerification = await bcrypt.compare(req.body.oldPassword, adminExist.password)
+            if(!passwordVerification) return res.status(400).json("Mot de passe incorrecte")
+
+            if(req.body.password !== req.body.passwordRepeat) return res.status(400).json('Les mots de passes doivent être les mêmes')
+
+            
+            const hashedPassword = await bcrypt.hash(req.body.password, 10)
+
+            const passwordVerificationFinal = await bcrypt.compare(req.body.password, adminExist.password)
+            if(passwordVerificationFinal) return res.status(400).json("Votre nouveau mot de passe ne peut pas être le même que l'ancien")
+
+            await adminModel.findByIdAndUpdate(adminExist, {password: hashedPassword})
+            
+        }else{
+            await adminModel.findByIdAndUpdate(adminExist, req.body)
+        }
+
+        const admin = await adminModel.findOne({_id: id})
+        res.json({admin})
+    } catch (err) {
+        res.status(400).json({err})
+        
     }
 }
 

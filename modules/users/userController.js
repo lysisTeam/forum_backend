@@ -140,8 +140,24 @@ module.exports.createUser = async (req,res) => {
 }
 
 module.exports.getUsers = async(req, res)=>{
+    const motCle = req.body.searchContent
     try {
-        const users = await userModel.find().sort({createdAt: -1})
+        let users = []
+
+        if (motCle) {
+            users = await userModel.find({
+                $or: [
+                    { nom: { $regex: motCle, $options: 'i' } }, // $regex pour une correspondance partielle, $options: 'i' pour insensible à la casse
+                    { prenoms: { $regex: motCle, $options: 'i' } },
+                    { email: { $regex: motCle, $options: 'i' } },
+                    { specialite: { $regex: motCle, $options: 'i' } },
+                    { classe: { $regex: motCle, $options: 'i' } }
+                ]
+            }).sort({createdAt: -1})
+        }else{
+            users = await userModel.find().sort({createdAt: -1})
+        }
+        
         res.json({users})
     } catch (err) {
         res.status(400).json({err})
