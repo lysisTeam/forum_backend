@@ -35,6 +35,7 @@ app.use(express.urlencoded({extended: true}))
 
 app.use('/api/admin', require('./modules/admins/adminRoute'))
 app.use('/api/user', require('./modules/users/userRoute'))
+app.use('/api/room', require('./modules/rooms/roomRoute'))
 
 //-------------------------------------------------------------------------------------------------------------------------------
 
