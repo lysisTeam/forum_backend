@@ -121,6 +121,7 @@ module.exports.getAdmins = async(req, res) =>{
                 $or: [
                     { nom: { $regex: motCle, $options: 'i' } }, // $regex pour une correspondance partielle, $options: 'i' pour insensible à la casse
                     { prenoms: { $regex: motCle, $options: 'i' } },
+                    { username: { $regex: motCle, $options: 'i' } },
                     { email: { $regex: motCle, $options: 'i' } },
 
                 ]
