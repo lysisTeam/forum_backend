@@ -2,17 +2,18 @@ const mongoose = require('mongoose')
 
 const roomSchema = new mongoose.Schema(
     {
-        nom: {
-            type: String,
-            required: true
-        },
+        // nom: {
+        //     type: String,
+        //     required: true
+        // },
         titre: {
             type: String,
             required: true
         },
         theme_de_discussion: {
             type: String,
-            required: true
+            // required: true
+            default: null
         },
         est_publique:{
             type: Boolean,
