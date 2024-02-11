@@ -13,7 +13,7 @@ const jwt = require('jsonwebtoken')
 */
 const verifyAdminToken = async (req, res, next) =>{
     const token = req.headers.token
-
+    
     if (!token) {
         return res.status(401).json({ message: 'Token non fourni' });
     }

@@ -1,7 +1,19 @@
 const roomModel = require("./roomModel")
 
+
+const unlikePic = (req) =>{
+    if(req.file){
+        fs.unlink(req.file.path,  (err) => {
+            if (err) {
+              throw new Error('Erreur lors de la suppression du fichier');
+            }
+        })
+    }
+}
+
 module.exports.addRoom = async(req, res) =>{
     const id = ((req.adminId) ? req.adminId : req.userId)
+    
 
     try {
         
@@ -13,10 +25,15 @@ module.exports.addRoom = async(req, res) =>{
             id_createur: id
         })
 
+        if(req.file){
+            newRoom.cover = req.file.path
+        }
+
         const room = await newRoom.save()
 
         res.json({room})
     } catch (error) {
+        unlikePic(req)
         res.status(400).json({error})
     }
 }
@@ -24,8 +41,8 @@ module.exports.addRoom = async(req, res) =>{
 module.exports.getRooms = async(req, res) => {
     try {
         const rooms = ((req.adminId) ? 
-            await roomModel.find({est_publique: true})
-        :   await roomModel.find({members: {$in : [req.userId]}})
+            await roomModel.find({est_publique: true}).sort({createdAt: -1})
+        :   await roomModel.find({members: {$in : [req.userId]}}).sort({createdAt: -1})
         )
 
         res.json({rooms})

@@ -27,6 +27,10 @@ const roomSchema = new mongoose.Schema(
             type: String,
             required: true
         },
+        cover:{
+            type: String,
+            default:null
+        }
     },
     {
         timestamps: true
