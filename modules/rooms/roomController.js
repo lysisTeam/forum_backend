@@ -21,7 +21,7 @@ module.exports.addRoom = async(req, res) =>{
             titre: req.body.titre.toLowerCase(),
             theme_de_discussion: req.body.theme_de_discussion.toLowerCase(),
             est_publique: ( req.adminId ? true : false ),
-            members: (req.adminId ? [] : [id]),
+            members: (req.adminId ? [{id: id, isAdmin: true}] : [{id: id, isAdmin: false}]),
             id_createur: id
         })
 

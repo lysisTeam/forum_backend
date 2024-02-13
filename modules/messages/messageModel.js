@@ -19,6 +19,9 @@ const messageSchema = new mongoose.Schema(
         },
         document: {
             type: String
+        },
+        type: {
+            type: String
         }
 
     },
