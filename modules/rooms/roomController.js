@@ -41,8 +41,8 @@ module.exports.addRoom = async(req, res) =>{
 module.exports.getRooms = async(req, res) => {
     try {
         const rooms = ((req.adminId) ? 
-            await roomModel.find({est_publique: true}).sort({createdAt: -1})
-        :   await roomModel.find({members: {$in : [req.userId]}}).sort({createdAt: -1})
+            await roomModel.find({est_publique: true}).sort({updatedAt: -1})
+        :   await roomModel.find({members: {$in : [req.userId]}}).sort({updatedAt: -1})
         )
 
         res.json({rooms})

@@ -30,6 +30,10 @@ const roomSchema = new mongoose.Schema(
         cover:{
             type: String,
             default:null
+        },
+        last_message : {
+            type: String,
+            default: ""
         }
     },
     {

@@ -113,10 +113,18 @@ module.exports.getAdmin = async(req, res)=>{
 
 module.exports.getAdmins = async(req, res) =>{
     const motCle = req.body.searchContent
+    const ids = req.body.ids
     try {
         let admins = []
 
-        if (motCle) {
+        if (ids) {
+            if (ids.length !== 0) {
+                admins = await adminModel.find( {_id: {$in: ids} }).sort({createdAt: -1})
+            }else{
+                admins = []
+
+            }
+        }else if (motCle) {
             admins = await adminModel.find({
                 $or: [
                     { nom: { $regex: motCle, $options: 'i' } }, // $regex pour une correspondance partielle, $options: 'i' pour insensible à la casse

@@ -141,10 +141,18 @@ module.exports.createUser = async (req,res) => {
 
 module.exports.getUsers = async(req, res)=>{
     const motCle = req.body.searchContent
+    const ids = req.body.ids
+   
     try {
         let users = []
 
-        if (motCle) {
+        if (ids) {
+            if (ids.length !== 0) {
+                users = await userModel.find({_id: {$in: ids}}).sort({createdAt: -1})
+            }else{
+                users = []
+            }
+        }else if (motCle) {
             users = await userModel.find({
                 $or: [
                     { nom: { $regex: motCle, $options: 'i' } }, // $regex pour une correspondance partielle, $options: 'i' pour insensible à la casse
