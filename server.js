@@ -8,7 +8,7 @@ const cors = require('cors') // initialisation de cors
 
 const dotenv = require('dotenv').config() // Pour pouvoir utiliser les variables d'environnement
 
-
+const socket = require('socket.io')
 
 // Recupération de la fonction pour la connexion à la base de données. cette fonction se trouve dans /config/db.js
 const dbConnect = require('./config/db')
@@ -56,7 +56,17 @@ dbConnect()
 
 createFirstAdmin()
 
-app.listen(process.env.PORT, ()=>{
+const server = app.listen(process.env.PORT, ()=>{
     console.log(`Serveur démarré.`);
 })
 
+const io = socket(server, {
+    cors: true
+})
+
+io.on('connection', (socket) =>{
+    console.log("Socket connected "+socket.id);
+    socket.on('message:send', data =>{
+        console.log(data);
+    })
+})

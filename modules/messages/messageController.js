@@ -18,7 +18,8 @@ module.exports.sendMessage = async(req, res)=>{
             id_user: req.adminId || req.userId,
             id_room: req.params.idRoom,
             type: data.type,
-            contenue: data.contenue || ""
+            contenue: data.contenue || "",
+            isResponseTo: data.isResponseTo || null
         })
 
         const message = await newMessage.save()

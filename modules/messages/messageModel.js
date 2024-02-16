@@ -22,6 +22,10 @@ const messageSchema = new mongoose.Schema(
         },
         type: {
             type: String
+        },
+        isResponseTo: {
+            type: String,
+            default: null
         }
 
     },
