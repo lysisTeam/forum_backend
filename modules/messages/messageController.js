@@ -1,3 +1,4 @@
+const { modifyRoom } = require('../rooms/roomFunc')
 const messageModel = require('./messageModel')
 
 module.exports.getMessages = async(req, res) =>{
@@ -10,23 +11,42 @@ module.exports.getMessages = async(req, res) =>{
 }
 
 module.exports.sendMessage = async(req, res)=>{
-    const data = req.body
-
-
     try {
-        const newMessage = new messageModel({
-            id_user: req.adminId || req.userId,
-            id_room: req.params.idRoom,
-            type: data.type,
-            contenue: data.contenue || "",
-            isResponseTo: data.isResponseTo || null
-        })
+        const message = await this.addMessage(req)
 
-        const message = await newMessage.save()
+        const requete = {
+            params: {
+                roomId: message.id_room
+            },
+            body:{
+                updatedAt: message.createdAt
+            }
+        }
 
-        res.json({message})
+        if (message.type === 'message') {
+            requete.body.last_message = message.contenue
+        }
+
+        const room = await modifyRoom(requete)
+
+        res.json({message: message, room: room})
         
     } catch (error) {
         res.status(400).json({error})
     }
+}
+
+module.exports.addMessage = async(req)=>{
+    const data = req.body
+
+    const newMessage = new messageModel({
+        id_user: req.adminId || req.userId,
+        id_room: req.params.idRoom,
+        type: data.type,
+        contenue: data.contenue || "",
+        isResponseTo: data.isResponseTo || null
+    })
+
+    const message = await newMessage.save()
+    return message
 }

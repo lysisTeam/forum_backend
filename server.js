@@ -15,6 +15,7 @@ const dbConnect = require('./config/db')
 
 // Recupération de la fonction pour la création automatique d'un premier admin
 const createFirstAdmin = require('./config/createFisrtAdmin')
+const { getRoom } = require('./modules/rooms/roomController')
 
 //-----------------------------------------------------------------------------------------------------------------------------
 
@@ -64,9 +65,38 @@ const io = socket(server, {
     cors: true
 })
 
+global.onlineUsers = []
+
 io.on('connection', (socket) =>{
     console.log("Socket connected "+socket.id);
-    socket.on('message:send', data =>{
-        console.log(data);
+
+    global.chatSocket = socket
+
+    socket.on('add-user', (userId) =>{
+        onlineUsers.push({userId: userId, socketId: socket.id})
+        // console.log("test : ",onlineUsers);
+    })
+
+    socket.on('disconnect-user', (userId) =>{
+        onlineUsers = onlineUsers.filter(onlineUser => onlineUser.userId !== userId)
+      
+    })
+
+
+
+
+    socket.on('message:send', async(data) =>{
+        // console.log(data);
+        // console.log(onlineUsers);
+        const usersToSend = data.users
+        const room = await getRoom(data.message.id_room)
+        console.log(room);
+        usersToSend.forEach(user => {
+            const connectedUser = onlineUsers.filter(onlineUser => onlineUser.userId === user._id)[0]
+            if (connectedUser) {
+                // console.log(connectedUser);
+                io.to(connectedUser.socketId).emit("message:receive", {message : data.message, room: room})
+            }
+        });
     })
 })
