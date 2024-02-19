@@ -26,6 +26,10 @@ const messageSchema = new mongoose.Schema(
         isResponseTo: {
             type: String,
             default: null
+        },
+        modified:{
+            type: Boolean,
+            default: false
         }
 
     },

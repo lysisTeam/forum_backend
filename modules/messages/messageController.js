@@ -50,3 +50,20 @@ module.exports.addMessage = async(req)=>{
     const message = await newMessage.save()
     return message
 }
+
+module.exports.updateMessage = async(req, res)=>{
+    try {
+       const messageExist = await messageModel.findById(req.params.idMessage)
+       if (!messageExist) return res.status(400).json({error : "Message inexistant"})
+
+       await messageModel.findByIdAndUpdate(messageExist, req.body, {new: true})
+        
+       const messageModified = await messageModel.findById(req.params.idMessage)
+
+       const messages = await messageModel.find({id_room: messageModified.id_room})
+
+       res.json({messageModified, messages})
+    } catch (error) {
+        res.status(400).json({error})
+    }
+}
