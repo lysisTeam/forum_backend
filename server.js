@@ -16,6 +16,7 @@ const dbConnect = require('./config/db')
 // Recupération de la fonction pour la création automatique d'un premier admin
 const createFirstAdmin = require('./config/createFisrtAdmin')
 const { getRoom } = require('./modules/rooms/roomController')
+const { getAllMessages } = require('./modules/messages/messageController')
 
 //-----------------------------------------------------------------------------------------------------------------------------
 
@@ -82,20 +83,47 @@ io.on('connection', (socket) =>{
       
     })
 
-
-
-
     socket.on('message:send', async(data) =>{
-        // console.log(data);
-        // console.log(onlineUsers);
+   
         const usersToSend = data.users
         const room = await getRoom(data.message.id_room)
-        console.log(room);
+        // console.log(room);
         usersToSend.forEach(user => {
             const connectedUser = onlineUsers.filter(onlineUser => onlineUser.userId === user._id)[0]
             if (connectedUser) {
                 // console.log(connectedUser);
                 io.to(connectedUser.socketId).emit("message:receive", {message : data.message, room: room})
+            }
+        });
+    })
+
+    socket.on('message:modified', async(data) =>{
+   
+        const usersToSend = data.users
+
+
+        const messages = await getAllMessages(data.message.id_room)
+
+        const result = {messages: messages, idRoom: data.message.id_room}
+
+        console.log(data.message);
+
+        // if (data.message.deleted) {
+
+        const lastElement = messages[messages.length - 1]
+
+        if (String(lastElement._id) === String(data.message._id)) {
+
+            const room = await getRoom(data.message.id_room)
+            result.room = room
+
+        }
+        // }
+        usersToSend.forEach(user => {
+            const connectedUser = onlineUsers.filter(onlineUser => onlineUser.userId === user._id)[0]
+            if (connectedUser) {
+                // console.log(connectedUser);
+                io.to(connectedUser.socketId).emit("message:receive-updated", result)
             }
         });
     })

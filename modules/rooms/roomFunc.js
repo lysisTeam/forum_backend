@@ -2,11 +2,13 @@ const roomModel = require("./roomModel")
 
 module.exports.modifyRoom = async (req)=>{
 
-    await roomModel.findByIdAndUpdate(req.params.roomId, req.body)
+    // console.log(req);
+
+    await roomModel.findByIdAndUpdate(req.params.roomId, req.body, {new: true, timestamps: false})
 
     const room = await roomModel.findById(req.params.roomId)
 
-    console.log(room);
+    // console.log(room);
 
     return room
 }

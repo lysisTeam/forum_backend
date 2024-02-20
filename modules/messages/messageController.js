@@ -3,12 +3,22 @@ const messageModel = require('./messageModel')
 
 module.exports.getMessages = async(req, res) =>{
     try {
-        const messages = await messageModel.find({id_room: req.params.idRoom})
+        const messages = await this.getAllMessages(req.params.idRoom)
+        // console.log(messages);
         res.json({messages})
     } catch (error) {
         res.status(400).json({error})
     }
 }
+
+module.exports.getAllMessages = async(idRoom) =>{
+   
+    const messages = await messageModel.find({id_room: idRoom})
+    // console.log(messages);
+    return messages
+    
+}
+
 
 module.exports.sendMessage = async(req, res)=>{
     try {
@@ -62,7 +72,36 @@ module.exports.updateMessage = async(req, res)=>{
 
        const messages = await messageModel.find({id_room: messageModified.id_room})
 
-       res.json({messageModified, messages})
+       const result = {}
+        
+    //    if (req.body.deleted) {
+
+        const lastElement = messages[messages.length - 1]
+
+        // console.log(String(lastElement._id));
+        // console.log("eee : ", messageExist._id);
+        // console.log(lastElement._id === messageExist._id);
+
+        if (String(lastElement._id) === String(messageExist._id)) {
+
+            const requete = {
+                params: {
+                    roomId: messageExist.id_room
+                },
+                body:{
+                    last_message: (messageModified.deleted ? "Ce méssage a été supprimé" : messageModified.contenue)
+                }
+            }
+
+            const room = await modifyRoom(requete)
+
+            result.room = room
+        }
+    //    }
+       result.messageModified = messageModified
+       result.messages = messages
+
+       res.json(result)
     } catch (error) {
         res.status(400).json({error})
     }

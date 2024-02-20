@@ -30,12 +30,16 @@ const messageSchema = new mongoose.Schema(
         modified:{
             type: Boolean,
             default: false
+        },
+        deleted:{
+            type: Boolean,
+            default: false
         }
-
     },
     {
         timestamps: true
     }
 )
+
 
 module.exports = mongoose.model('messageModel', messageSchema)
