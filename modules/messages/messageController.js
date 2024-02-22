@@ -22,6 +22,15 @@ module.exports.getAllMessages = async(idRoom) =>{
 
 module.exports.sendMessage = async(req, res)=>{
     try {
+
+        
+        if(req.files && req.files.length !== 0){
+            req.files = req.files.map(file => file.path)
+            console.log(req.files.map(file => file.path));
+        }
+        
+        // console.log(req);
+
         const message = await this.addMessage(req)
 
         const requete = {
@@ -37,6 +46,7 @@ module.exports.sendMessage = async(req, res)=>{
             requete.body.last_message = message.contenue
         }
 
+  
         const room = await modifyRoom(requete)
 
         res.json({message: message, room: room})
@@ -54,7 +64,8 @@ module.exports.addMessage = async(req)=>{
         id_room: req.params.idRoom,
         type: data.type,
         contenue: data.contenue || "",
-        isResponseTo: data.isResponseTo || null
+        isResponseTo: data.isResponseTo || null,
+        files: req.files || null
     })
 
     const message = await newMessage.save()
