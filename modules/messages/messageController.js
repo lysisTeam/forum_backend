@@ -1,3 +1,4 @@
+const { path } = require('express/lib/application')
 const { modifyRoom } = require('../rooms/roomFunc')
 const messageModel = require('./messageModel')
 
@@ -25,8 +26,14 @@ module.exports.sendMessage = async(req, res)=>{
 
         
         if(req.files && req.files.length !== 0){
-            req.files = req.files.map(file => file.path)
-            console.log(req.files.map(file => file.path));
+
+            const tab = []
+            req.files.forEach(file => {
+                const line = {path: file.path, name: file.originalname, size: file.size}
+                tab.push(line)
+            })
+
+            req.files = tab
         }
         
         // console.log(req);
@@ -43,7 +50,12 @@ module.exports.sendMessage = async(req, res)=>{
         }
 
         if (message.type === 'message') {
-            requete.body.last_message = message.contenue
+            if (message.contenue) {
+                requete.body.last_message = message.contenue
+            }else{
+                requete.body.last_message = "Média"
+            }
+            
         }
 
   
