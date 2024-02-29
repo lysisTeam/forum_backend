@@ -29,7 +29,18 @@ module.exports.sendMessage = async(req, res)=>{
 
             const tab = []
             req.files.forEach(file => {
-                const line = {path: file.path, name: file.originalname, size: file.size}
+
+                let type;
+
+                if (file.originalname.substr(-3,3) === 'pdf') {
+                    type = 'document'
+                }else if(file.originalname.substr(-3,3) === 'wav'){
+                    type = 'audio'
+                }else{
+                    type = 'image'
+                }
+
+                const line = {path: file.path, name: file.originalname, size: file.size, type: type}
                 tab.push(line)
             })
 
